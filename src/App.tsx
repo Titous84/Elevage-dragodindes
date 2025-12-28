@@ -96,7 +96,7 @@ export default function App(): React.JSX.Element {
     setFiltre('TOUT');
   };
 
-  // Recettes helpers
+  // Utilitaires des recettes
   const trouverDindeParId = (id: string): Dragodinde | undefined => DRAGODINDES.find((d) => d.id === id);
   const recettePour = (id: string) => RECETTES.find((r) => r.cibleId === id) ?? null;
 

@@ -148,7 +148,7 @@ h1 { margin: 0; font-size: 20px; }
   transition: filter 0.14s ease, transform 0.14s ease;
 }
 
-/* Hover léger (pas d'aura qui déborde) */
+/* Survol léger (pas d'aura qui déborde) */
 .carte:hover {
   transform: translateY(-2px);
   filter: brightness(1.08);
@@ -204,7 +204,7 @@ h1 { margin: 0; font-size: 20px; }
   100% { background-position: 300% 50%; }
 }
 
-/* Hover: juste un peu plus punchy */
+/* Survol : juste un peu plus punchy */
 .carte:hover::before {
   opacity: 1;
   animation-duration: 2.6s;
