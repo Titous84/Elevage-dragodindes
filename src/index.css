@@ -1,0 +1,423 @@
+:root {
+  font-family: system-ui, Arial, sans-serif;
+  line-height: 1.4;
+  color: #eaeaea;
+  background: #0b0d10;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.page { max-width: 1120px; margin: 0 auto; padding: 18px; }
+
+h1 { margin: 0; font-size: 20px; }
+.mini { opacity: 0.85; font-size: 13px; }
+
+/* ========================= BARRE DU HAUT ========================= */
+
+.barre {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 16px;
+  border: 1px solid #222;
+  border-radius: 14px;
+  background: radial-gradient(1200px 260px at 15% 0%, rgba(120,70,255,0.12), transparent 55%),
+              #11151b;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.barre-gauche { flex: 1; min-width: 280px; }
+
+.titre-wow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-orbe {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #7c4dff;
+  box-shadow: 0 0 0 6px rgba(124,77,255,0.12), 0 0 20px rgba(124,77,255,0.35);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+.progress-outer {
+  margin-top: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.07);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.progress-inner {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(124,77,255,0.95), rgba(46,204,113,0.95));
+  box-shadow: 0 0 18px rgba(124,77,255,0.25);
+  transition: width 0.35s ease;
+}
+
+.barre-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #2a3340;
+  background: #0b0d10;
+  color: #eaeaea;
+}
+
+.btn {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #2a3340;
+  background: rgba(11, 13, 16, 0.9);
+  color: #eaeaea;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease, filter 0.12s ease;
+}
+.btn:hover { border-color: #3a475a; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-actif { background: #172033; border-color: #4b6aa6; }
+.btn-danger { border-color: #5a2f2f; }
+.btn-danger:hover { border-color: #a24c4c; }
+
+.contenu {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ========================= SECTIONS ========================= */
+
+.section {
+  border: 1px solid #222;
+  border-radius: 14px;
+  background: #0f1319;
+  padding: 14px;
+}
+
+.section-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.section-entete h2 { margin: 0; font-size: 16px; }
+.compteur { opacity: 0.85; font-size: 13px; }
+
+.grille {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px; /* plus aéré */
+}
+
+/* ========================= CARTES ========================= */
+
+.carte {
+  border-radius: 14px;
+  padding: 18px;
+  min-height: 180px;
+  position: relative;
+
+  /* IMPORTANT : empêche tout “débordement” d'effet visuel */
+  overflow: hidden;
+
+  /* Bordure “de base” (structure) */
+  border: 1px solid rgba(255,255,255,0.10);
+
+  background: #0b0d10;
+  transition: filter 0.14s ease, transform 0.14s ease;
+}
+
+/* Hover léger (pas d'aura qui déborde) */
+.carte:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+/* --- Couleurs de fond par statut (tes styles) --- */
+.carte-a_faire {
+  background: #500404;
+}
+.carte-en_fecundation, .carte-en_fecondation {
+  background: linear-gradient(135deg, #1124d1, #0b0d10);
+}
+.carte-a_monter {
+  background: linear-gradient(135deg, #c08e04, #0b0d10);
+}
+.carte-obtenue {
+  background: linear-gradient(135deg, #0f2a1a, #0b0d10);
+}
+
+/* ================== BORDURE ANIMÉE (FLUO) ==================
+   - Reste strictement DANS le cadre (overflow hidden)
+   - N'affiche QUE la bordure grâce au mask (pas un halo dehors)
+*/
+.carte::before {
+  content: "";
+  position: absolute;
+  inset: 0;                 /* exactement le cadre */
+  padding: 2px;             /* épaisseur de la bordure animée */
+  border-radius: 14px;
+  pointer-events: none;
+  opacity: 0.95;
+
+  /* Dégradé animé (par défaut neutre) */
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.25),
+    rgba(255,255,255,0.65),
+    rgba(255,255,255,0.25)
+  );
+  background-size: 300% 100%;
+  animation: borderFlow 3.8s linear infinite;
+
+  /* On “découpe” le centre pour ne garder que la bordure */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+@keyframes borderFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* Hover: juste un peu plus punchy */
+.carte:hover::before {
+  opacity: 1;
+  animation-duration: 2.6s;
+}
+
+/* --- Couleurs de bordure animée selon statut (fluo mais propre) --- */
+.carte-a_faire::before {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 60, 60, 0.25),
+    rgba(255, 60, 60, 0.90),
+    rgba(255, 60, 60, 0.25)
+  );
+  background-size: 300% 100%;
+}
+
+.carte-en_fecundation::before,
+.carte-en_fecondation::before {
+  background: linear-gradient(
+    90deg,
+    rgba(70, 120, 255, 0.25),
+    rgba(70, 120, 255, 0.95),
+    rgba(70, 120, 255, 0.25)
+  );
+  background-size: 300% 100%;
+}
+
+.carte-a_monter::before {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 200, 60, 0.22),
+    rgba(255, 200, 60, 0.95),
+    rgba(255, 200, 60, 0.22)
+  );
+  background-size: 300% 100%;
+}
+
+.carte-obtenue::before {
+  background: linear-gradient(
+    90deg,
+    rgba(46, 204, 113, 0.20),
+    rgba(46, 255, 170, 0.95),
+    rgba(46, 204, 113, 0.20)
+  );
+  background-size: 300% 100%;
+}
+
+/* --- Contenu carte --- */
+
+.carte-ligne {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.carte-titre {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.carte-titre strong {
+  font-size: 15px;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.15);
+  opacity: 0.95;
+}
+
+.carte-actions {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.carte-actions .btn {
+  padding: 12px 10px;
+  font-size: 13px;
+}
+
+.hint-mini {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  font-size: 11px;
+  opacity: 0.70;
+}
+
+/* Images */
+.dinde-img{
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.dinde-img-lg{
+  width: 88px;
+  height: 88px;
+}
+
+/* ========================= MODAL ========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.70);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 50;
+}
+
+.modal {
+  width: min(820px, 100%);
+  background: radial-gradient(900px 260px at 20% 0%, rgba(124,77,255,0.12), transparent 60%),
+              #0f1319;
+  border: 1px solid #222;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+}
+
+.modal-pop { animation: pop 0.16s ease-out; }
+@keyframes pop {
+  from { transform: translateY(8px) scale(0.98); opacity: 0.6; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modal-titre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sparkle {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #2ecc71;
+  box-shadow: 0 0 0 6px rgba(46,204,113,0.12), 0 0 18px rgba(46,204,113,0.35);
+}
+
+.modal-entete h3 { margin: 0; font-size: 16px; }
+.modal-contenu { margin-top: 10px; }
+
+.modal-cible {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+}
+
+.modal-cible-nom {
+  margin-top: 4px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.modal-parents {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.parent {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.parent strong { font-size: 15px; }
+
+.parent-click {
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.parent-click:hover { transform: translateY(-2px); filter: brightness(1.04); }
+
+/* Accents couleur selon statut (parents) */
+.parent-obtenue { border-color: rgba(46,204,113,0.7); }
+.parent-en_fecundation, .parent-en_fecondation { border-color: rgba(201,122,26,0.75); }
+.parent-a_monter { border-color: rgba(58,102,204,0.75); }
+.parent-a_faire { border-color: rgba(255,255,255,0.18); }
+
+/* Mobile */
+@media (max-width: 720px) {
+  .barre { flex-direction: column; align-items: stretch; }
+  .modal-parents { grid-template-columns: 1fr; }
+  .grille { grid-template-columns: 1fr; }
+}
