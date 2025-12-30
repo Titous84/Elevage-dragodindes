@@ -10,7 +10,6 @@ export interface MonstreOcre {
   nom: string;
   etape: number;
   slug: string;
-  occurrence: number;
 }
 
 export const ETAPES_OCRE: EtapeOcre[] = [
@@ -1454,19 +1453,21 @@ export const ETAPES_OCRE: EtapeOcre[] = [
 ];
 
 export const MONSTRES_OCRE: MonstreOcre[] = ETAPES_OCRE.flatMap((etape) => {
-  const compteur: Record<string, number> = {};
+  const uniques: string[] = [];
+  etape.monstres.forEach((nom) => {
+    if (!uniques.includes(nom)) {
+      uniques.push(nom);
+    }
+  });
 
-  return etape.monstres.map((nom) => {
+  return uniques.map((nom) => {
     const slug = slugifierMonstre(nom);
-    const occurrence = (compteur[slug] ?? 0) + 1;
-    compteur[slug] = occurrence;
 
     return {
-      id: `etape-${etape.numero}-${slug}-${occurrence}`,
+      id: `etape-${etape.numero}-${slug}`,
       nom,
       etape: etape.numero,
       slug,
-      occurrence,
     };
   });
 });

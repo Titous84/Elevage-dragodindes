@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ETAPES_OCRE, MONSTRES_OCRE } from '../data/ocreMonstres';
 import type { MonstreOcreProgression } from '../types/ocre';
-import { chargerEtatOcre, creerEtatOcreInitial, migrerAncienEtatOcre, sauvegarderEtatOcre } from '../utils/stockageOcre';
+import {
+  chargerEtatOcre,
+  creerEtatOcreInitial,
+  migrerAncienEtatOcre,
+  normaliserProgression,
+  sauvegarderEtatOcre,
+} from '../utils/stockageOcre';
 
 const EXTENSIONS = ['png', 'jpeg', 'jpg'] as const;
 
@@ -141,17 +147,7 @@ export function PageOcre(): React.JSX.Element {
           throw new Error('Format invalide');
         }
 
-        const progression: Record<string, boolean> = { ...creerEtatOcreInitial().progression };
-        Object.entries(json.progression).forEach(([id, valeur]) => {
-          if (Object.hasOwn(progression, id)) {
-            progression[id] = Boolean(valeur);
-          }
-        });
-
-        setEtat({
-          progression,
-          derniereMAJISO: new Date().toISOString(),
-        });
+        setEtat(normaliserProgression(json.progression));
       } catch {
         alert('Import impossible : fichier invalide.');
       }

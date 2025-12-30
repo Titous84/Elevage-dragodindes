@@ -12,7 +12,8 @@ export function chargerEtatOcre(): MonstreOcreProgression | null {
   try {
     const brut = localStorage.getItem(CLE_STORAGE_OCRE);
     if (!brut) return null;
-    return JSON.parse(brut) as MonstreOcreProgression;
+    const etat = JSON.parse(brut) as MonstreOcreProgression;
+    return normaliserProgression(etat.progression ?? {});
   } catch {
     return null;
   }
@@ -34,32 +35,54 @@ export function creerEtatOcreInitial(): MonstreOcreProgression {
   };
 }
 
+export function normaliserProgression(progression: Record<string, boolean>): MonstreOcreProgression {
+  const base = creerEtatOcreInitial();
+  const idsParCle = new Map<string, string>();
+  MONSTRES_OCRE.forEach((monstre) => {
+    idsParCle.set(`${monstre.etape}-${monstre.slug}`, monstre.id);
+  });
+
+  Object.entries(progression).forEach(([id, valeur]) => {
+    if (!valeur) return;
+    if (Object.hasOwn(base.progression, id)) {
+      base.progression[id] = true;
+      return;
+    }
+
+    const match = id.match(/^etape-(\\d+)-(.+?)(?:-\\d+)?$/);
+    if (!match) return;
+    const cle = `${match[1]}-${match[2]}`;
+    const idNormalise = idsParCle.get(cle);
+    if (idNormalise) {
+      base.progression[idNormalise] = true;
+    }
+  });
+
+  return {
+    progression: base.progression,
+    derniereMAJISO: new Date().toISOString(),
+  };
+}
+
 export function migrerAncienEtatOcre(etat: AncienEtatOcre): MonstreOcreProgression {
   const base = creerEtatOcreInitial();
   if (!etat.captures || etat.captures.length === 0) {
     return base;
   }
 
-  const parSlug: Record<string, string[]> = {};
+  const parSlug: Record<string, string> = {};
   MONSTRES_OCRE.forEach((monstre) => {
     if (!parSlug[monstre.slug]) {
-      parSlug[monstre.slug] = [];
+      parSlug[monstre.slug] = monstre.id;
     }
-    parSlug[monstre.slug].push(monstre.id);
   });
-
-  Object.values(parSlug).forEach((ids) => ids.sort());
-
-  const compteurs: Record<string, number> = {};
 
   etat.captures.forEach((capture) => {
     if (!capture.nom || !capture.obtenue) return;
     const slug = slugifierMonstre(capture.nom);
-    const index = compteurs[slug] ?? 0;
-    const id = parSlug[slug]?.[index];
+    const id = parSlug[slug];
     if (id) {
       base.progression[id] = true;
-      compteurs[slug] = index + 1;
     }
   });
 
