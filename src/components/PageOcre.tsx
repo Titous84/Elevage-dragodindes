@@ -67,6 +67,7 @@ export function PageOcre(): React.JSX.Element {
   });
   const [filtre, setFiltre] = useState<'TOUT' | 'OBTENUE' | 'A_FAIRE'>('TOUT');
   const [recherche, setRecherche] = useState<string>('');
+  const [etapesReduites, setEtapesReduites] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     sauvegarderEtatOcre(etat);
@@ -108,6 +109,13 @@ export function PageOcre(): React.JSX.Element {
     setEtat((ancien: MonstreOcreProgression) => ({
       progression: { ...ancien.progression, [id]: !ancien.progression[id] },
       derniereMAJISO: new Date().toISOString(),
+    }));
+  };
+
+  const basculerEtape = (numero: number): void => {
+    setEtapesReduites((ancien) => ({
+      ...ancien,
+      [numero]: !ancien[numero],
     }));
   };
 
@@ -213,29 +221,46 @@ export function PageOcre(): React.JSX.Element {
         <section key={etape.numero} className="section">
           <div className="section-entete">
             <h2>Étape {etape.numero}</h2>
-            <div className="compteur">
-              {etape.obtenues} / {etape.total}
+            <div className="section-actions">
+              <div className="compteur">
+                {etape.obtenues} / {etape.total}
+              </div>
+              <button
+                className="btn btn-ghost btn-mini"
+                type="button"
+                onClick={() => basculerEtape(etape.numero)}
+                aria-expanded={!etapesReduites[etape.numero]}
+              >
+                {etapesReduites[etape.numero] ? 'Afficher' : 'Réduire'}
+              </button>
             </div>
           </div>
 
-          {etape.monstres.length === 0 ? (
-            <div className="ocre-vide mini">Aucun monstre pour ce filtre.</div>
-          ) : (
-            <ul className="ocre-liste">
-              {etape.monstres.map((monstre) => (
-                <li key={monstre.id} className={`ocre-item ${etat.progression[monstre.id] ? 'ocre-item-ok' : ''}`}>
-                  <label className="ocre-item-check">
-                    <input
-                      type="checkbox"
-                      checked={etat.progression[monstre.id]}
-                      onChange={() => basculerCapture(monstre.id)}
-                    />
-                    <ImageMonstre nom={monstre.nom} slug={monstre.slug} />
-                    <span>{monstre.nom}</span>
-                  </label>
-                </li>
-              ))}
-            </ul>
+          {!etapesReduites[etape.numero] && (
+            <>
+              {etape.monstres.length === 0 ? (
+                <div className="ocre-vide mini">Aucun monstre pour ce filtre.</div>
+              ) : (
+                <ul className="ocre-liste">
+                  {etape.monstres.map((monstre) => (
+                    <li
+                      key={monstre.id}
+                      className={`ocre-item ${etat.progression[monstre.id] ? 'ocre-item-ok' : ''}`}
+                    >
+                      <label className="ocre-item-check">
+                        <input
+                          type="checkbox"
+                          checked={etat.progression[monstre.id]}
+                          onChange={() => basculerCapture(monstre.id)}
+                        />
+                        <ImageMonstre nom={monstre.nom} slug={monstre.slug} />
+                        <span>{monstre.nom}</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           )}
         </section>
       ))}

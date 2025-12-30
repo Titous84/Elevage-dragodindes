@@ -119,6 +119,11 @@ h1 { margin: 0; font-size: 20px; }
   border-color: #2a3340;
 }
 
+.btn-mini {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
 .contenu {
   margin-top: 16px;
   display: flex;
@@ -144,6 +149,12 @@ h1 { margin: 0; font-size: 20px; }
 
 .section-entete h2 { margin: 0; font-size: 16px; }
 .compteur { opacity: 0.85; font-size: 13px; }
+
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
 .grille {
   margin-top: 12px;
