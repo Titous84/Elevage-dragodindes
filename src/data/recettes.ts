@@ -5,12 +5,12 @@ export interface RecetteAccouplement {
 }
 
 export const RECETTES: RecetteAccouplement[] = [
-  // Gen 2
+  // Génération 2
   { cibleId: 'g2-amande-rousse', parent1Id: 'g1-amande', parent2Id: 'g1-rousse' },
   { cibleId: 'g2-doree-rousse', parent1Id: 'g1-doree', parent2Id: 'g1-rousse' },
   { cibleId: 'g2-amande-doree', parent1Id: 'g1-amande', parent2Id: 'g1-doree' },
 
-  // Gen 4
+  // Génération 4
   { cibleId: 'g4-indigo-rousse', parent1Id: 'g3-indigo', parent2Id: 'g1-rousse' },
   { cibleId: 'g4-ebene-rousse', parent1Id: 'g3-ebene', parent2Id: 'g1-rousse' },
   { cibleId: 'g4-amande-indigo', parent1Id: 'g1-amande', parent2Id: 'g3-indigo' },
@@ -19,7 +19,7 @@ export const RECETTES: RecetteAccouplement[] = [
   { cibleId: 'g4-doree-ebene', parent1Id: 'g1-doree', parent2Id: 'g3-ebene' },
   { cibleId: 'g4-ebene-indigo', parent1Id: 'g3-ebene', parent2Id: 'g3-indigo' },
 
-  // Gen 6
+  // Génération 6
   { cibleId: 'g6-pourpre-rousse', parent1Id: 'g5-pourpre', parent2Id: 'g1-rousse' },
   { cibleId: 'g6-orchidee-rousse', parent1Id: 'g5-orchidee', parent2Id: 'g1-rousse' },
   { cibleId: 'g6-amande-pourpre', parent1Id: 'g1-amande', parent2Id: 'g5-pourpre' },
@@ -32,7 +32,7 @@ export const RECETTES: RecetteAccouplement[] = [
   { cibleId: 'g6-ebene-orchidee', parent1Id: 'g3-ebene', parent2Id: 'g5-orchidee' },
   { cibleId: 'g6-orchidee-pourpre', parent1Id: 'g5-orchidee', parent2Id: 'g5-pourpre' },
 
-  // Gen 8
+  // Génération 8
   { cibleId: 'g8-ivoire-rousse', parent1Id: 'g7-ivoire', parent2Id: 'g1-rousse' },
   { cibleId: 'g8-turquoise-rousse', parent1Id: 'g7-turquoise', parent2Id: 'g1-rousse' },
   { cibleId: 'g8-amande-ivoire', parent1Id: 'g1-amande', parent2Id: 'g7-ivoire' },
@@ -49,7 +49,7 @@ export const RECETTES: RecetteAccouplement[] = [
   { cibleId: 'g8-turquoise-orchidee', parent1Id: 'g7-turquoise', parent2Id: 'g5-orchidee' },
   { cibleId: 'g8-ivoire-turquoise', parent1Id: 'g7-ivoire', parent2Id: 'g7-turquoise' },
 
-  // Gen 10
+  // Génération 10
   { cibleId: 'g10-emeraude-rousse', parent1Id: 'g9-emeraude', parent2Id: 'g1-rousse' },
   { cibleId: 'g10-prune-rousse', parent1Id: 'g9-prune', parent2Id: 'g1-rousse' },
   { cibleId: 'g10-amande-emeraude', parent1Id: 'g1-amande', parent2Id: 'g9-emeraude' },

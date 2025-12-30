@@ -13,6 +13,15 @@ body { margin: 0; }
 h1 { margin: 0; font-size: 20px; }
 .mini { opacity: 0.85; font-size: 13px; }
 
+/* ========================= NAVIGATION ========================= */
+
+.navigation {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
 /* ========================= BARRE DU HAUT ========================= */
 
 .barre {
@@ -82,6 +91,15 @@ h1 { margin: 0; font-size: 20px; }
   color: #eaeaea;
 }
 
+.input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #2a3340;
+  background: #0b0d10;
+  color: #eaeaea;
+  width: 100%;
+}
+
 .btn {
   padding: 10px 12px;
   border-radius: 10px;
@@ -96,6 +114,15 @@ h1 { margin: 0; font-size: 20px; }
 .btn-actif { background: #172033; border-color: #4b6aa6; }
 .btn-danger { border-color: #5a2f2f; }
 .btn-danger:hover { border-color: #a24c4c; }
+.btn-ghost {
+  background: transparent;
+  border-color: #2a3340;
+}
+
+.btn-mini {
+  padding: 6px 10px;
+  font-size: 12px;
+}
 
 .contenu {
   margin-top: 16px;
@@ -123,11 +150,88 @@ h1 { margin: 0; font-size: 20px; }
 .section-entete h2 { margin: 0; font-size: 16px; }
 .compteur { opacity: 0.85; font-size: 13px; }
 
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .grille {
   margin-top: 12px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 16px; /* plus aéré */
+}
+
+/* ========================= DOFUS OCRE ========================= */
+
+.page-ocre {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ocre-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ocre-aide {
+  opacity: 0.75;
+}
+
+.ocre-recherche {
+  display: flex;
+  gap: 10px;
+}
+
+.ocre-liste {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ocre-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.2);
+}
+
+.ocre-item-ok {
+  border-color: rgba(46,204,113,0.55);
+  background: rgba(46,204,113,0.12);
+}
+
+.ocre-item-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ocre-image {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.05);
+}
+
+.ocre-image-manquante {
+  display: inline-block;
+}
+
+.ocre-vide {
+  margin-top: 14px;
 }
 
 /* ========================= CARTES ========================= */
@@ -148,7 +252,7 @@ h1 { margin: 0; font-size: 20px; }
   transition: filter 0.14s ease, transform 0.14s ease;
 }
 
-/* Hover léger (pas d'aura qui déborde) */
+/* Survol léger (pas d'aura qui déborde) */
 .carte:hover {
   transform: translateY(-2px);
   filter: brightness(1.08);
@@ -204,7 +308,7 @@ h1 { margin: 0; font-size: 20px; }
   100% { background-position: 300% 50%; }
 }
 
-/* Hover: juste un peu plus punchy */
+/* Survol : juste un peu plus punchy */
 .carte:hover::before {
   opacity: 1;
   animation-duration: 2.6s;
