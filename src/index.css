@@ -166,19 +166,13 @@ h1 { margin: 0; font-size: 20px; }
   gap: 8px;
 }
 
-.ocre-ajout {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.ocre-ajout .input {
-  flex: 1;
-  min-width: 220px;
-}
-
 .ocre-aide {
   opacity: 0.75;
+}
+
+.ocre-recherche {
+  display: flex;
+  gap: 10px;
 }
 
 .ocre-liste {
@@ -210,6 +204,19 @@ h1 { margin: 0; font-size: 20px; }
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.ocre-image {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.05);
+}
+
+.ocre-image-manquante {
+  display: inline-block;
 }
 
 .ocre-vide {

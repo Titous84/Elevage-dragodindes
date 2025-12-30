@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "images:dindes": "node scripts/telecharger-images-tofus.mjs"
+    "images:dindes": "node scripts/telecharger-images-tofus.mjs",
+    "images:ocre": "node scripts/telecharger-monstres-ocre.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",

@@ -1,68 +1,112 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import type { CaptureAme, EtatOcre } from '../types/ocre';
-import { chargerEtatOcre, creerEtatOcreInitial, sauvegarderEtatOcre } from '../utils/stockageOcre';
+import { ETAPES_OCRE, MONSTRES_OCRE } from '../data/ocreMonstres';
+import type { MonstreOcreProgression } from '../types/ocre';
+import { chargerEtatOcre, creerEtatOcreInitial, migrerAncienEtatOcre, sauvegarderEtatOcre } from '../utils/stockageOcre';
 
-function creerIdCapture(): string {
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const EXTENSIONS = ['png', 'jpeg', 'jpg'] as const;
+
+type Extension = (typeof EXTENSIONS)[number];
+
+function ImageMonstre({ nom, slug }: { nom: string; slug: string }): React.JSX.Element {
+  const [extension, setExtension] = useState<Extension>('png');
+  const [aEssayer, setAEssayer] = useState<Extension[]>([...EXTENSIONS]);
+
+  useEffect(() => {
+    setExtension('png');
+    setAEssayer([...EXTENSIONS]);
+  }, [slug]);
+
+  const gererErreur = (): void => {
+    const restantes = aEssayer.slice(1);
+    if (restantes.length === 0) {
+      setExtension('png');
+      setAEssayer([]);
+      return;
+    }
+    setAEssayer(restantes);
+    setExtension(restantes[0]);
+  };
+
+  if (aEssayer.length === 0) {
+    return <div className="ocre-image ocre-image-manquante" aria-hidden="true" />;
+  }
+
+  return (
+    <img
+      className="ocre-image"
+      src={`/monstres/${slug}.${extension}`}
+      alt={nom}
+      loading="lazy"
+      onError={gererErreur}
+    />
+  );
 }
 
 export function PageOcre(): React.JSX.Element {
-  const [etat, setEtat] = useState<EtatOcre>(() => {
+  const [etat, setEtat] = useState<MonstreOcreProgression>(() => {
     const existant = chargerEtatOcre();
-    return existant ?? creerEtatOcreInitial();
+    if (existant) return existant;
+
+    const brut = localStorage.getItem('dofus_ocre_captures_v1');
+    if (brut) {
+      try {
+        const ancien = JSON.parse(brut) as unknown;
+        return migrerAncienEtatOcre(ancien as { captures?: { nom?: string; obtenue?: boolean }[] });
+      } catch {
+        return creerEtatOcreInitial();
+      }
+    }
+
+    return creerEtatOcreInitial();
   });
-  const [nouvelleCapture, setNouvelleCapture] = useState<string>('');
   const [filtre, setFiltre] = useState<'TOUT' | 'OBTENUE' | 'A_FAIRE'>('TOUT');
+  const [recherche, setRecherche] = useState<string>('');
 
   useEffect(() => {
     sauvegarderEtatOcre(etat);
   }, [etat]);
 
-  const total = etat.captures.length;
-  const obtenues = useMemo(() => etat.captures.filter((capture) => capture.obtenue).length, [etat.captures]);
+  const total = MONSTRES_OCRE.length;
+  const obtenues = useMemo(
+    () => MONSTRES_OCRE.filter((monstre) => etat.progression[monstre.id]).length,
+    [etat.progression]
+  );
   const pourcentage = total === 0 ? 0 : Math.round((obtenues / total) * 100);
 
-  const capturesFiltrees = useMemo(() => {
-    if (filtre === 'OBTENUE') return etat.captures.filter((capture) => capture.obtenue);
-    if (filtre === 'A_FAIRE') return etat.captures.filter((capture) => !capture.obtenue);
-    return etat.captures;
-  }, [etat.captures, filtre]);
+  const termeRecherche = recherche.trim().toLowerCase();
 
-  const ajouterCapture = (): void => {
-    const nom = nouvelleCapture.trim();
-    if (!nom) return;
+  const monstresParEtape = useMemo(() => {
+    return ETAPES_OCRE.map((etape) => {
+      const monstres = MONSTRES_OCRE.filter((monstre) => monstre.etape === etape.numero);
 
-    const nouvelleEntree: CaptureAme = {
-      id: creerIdCapture(),
-      nom,
-      obtenue: false,
-    };
+      const filtres = monstres.filter((monstre) => {
+        const estObtenue = etat.progression[monstre.id];
+        if (filtre === 'OBTENUE' && !estObtenue) return false;
+        if (filtre === 'A_FAIRE' && estObtenue) return false;
+        if (termeRecherche && !monstre.nom.toLowerCase().includes(termeRecherche)) return false;
+        return true;
+      });
 
-    setEtat((ancien: EtatOcre) => ({
-      captures: [nouvelleEntree, ...ancien.captures],
-      derniereMAJISO: new Date().toISOString(),
-    }));
-    setNouvelleCapture('');
-  };
+      const obtenuesEtape = monstres.filter((monstre) => etat.progression[monstre.id]).length;
+
+      return {
+        numero: etape.numero,
+        monstres: filtres,
+        total: monstres.length,
+        obtenues: obtenuesEtape,
+      };
+    });
+  }, [etat.progression, filtre, termeRecherche]);
 
   const basculerCapture = (id: string): void => {
-    setEtat((ancien: EtatOcre) => ({
-      captures: ancien.captures.map((capture) =>
-        capture.id === id ? { ...capture, obtenue: !capture.obtenue } : capture
-      ),
-      derniereMAJISO: new Date().toISOString(),
-    }));
-  };
-
-  const supprimerCapture = (id: string): void => {
-    setEtat((ancien: EtatOcre) => ({
-      captures: ancien.captures.filter((capture) => capture.id !== id),
+    setEtat((ancien: MonstreOcreProgression) => ({
+      progression: { ...ancien.progression, [id]: !ancien.progression[id] },
       derniereMAJISO: new Date().toISOString(),
     }));
   };
 
   const reinitialiser = (): void => {
-    const ok = confirm('Effacer toutes les captures du Dofus Ocre ?');
+    const ok = confirm('Réinitialiser toute la progression du Dofus Ocre ?');
     if (!ok) return;
     setEtat(creerEtatOcreInitial());
   };
@@ -91,21 +135,21 @@ export function PageOcre(): React.JSX.Element {
 
       try {
         const texte = await fichier.text();
-        const json = JSON.parse(texte) as EtatOcre;
+        const json = JSON.parse(texte) as MonstreOcreProgression;
 
-        const captures = Array.isArray(json.captures)
-          ? json.captures
-              .filter((capture) => typeof capture.nom === 'string')
-              .map((capture) => ({
-                id: typeof capture.id === 'string' ? capture.id : creerIdCapture(),
-                nom: capture.nom.trim(),
-                obtenue: Boolean(capture.obtenue),
-              }))
-              .filter((capture) => capture.nom.length > 0)
-          : [];
+        if (!json.progression) {
+          throw new Error('Format invalide');
+        }
+
+        const progression: Record<string, boolean> = { ...creerEtatOcreInitial().progression };
+        Object.entries(json.progression).forEach(([id, valeur]) => {
+          if (Object.hasOwn(progression, id)) {
+            progression[id] = Boolean(valeur);
+          }
+        });
 
         setEtat({
-          captures,
+          progression,
           derniereMAJISO: new Date().toISOString(),
         });
       } catch {
@@ -155,53 +199,50 @@ export function PageOcre(): React.JSX.Element {
       </div>
 
       <div className="ocre-actions">
-        <div className="ocre-ajout">
+        <div className="ocre-recherche">
           <input
             className="input"
-            value={nouvelleCapture}
-            onChange={(e) => setNouvelleCapture(e.target.value)}
-            placeholder="Ex. : Dragoeuf de saphir"
-            aria-label="Nom de la capture d'âme"
+            value={recherche}
+            onChange={(e) => setRecherche(e.target.value)}
+            placeholder="Rechercher un monstre"
+            aria-label="Recherche d'un monstre"
           />
-          <button className="btn" type="button" onClick={ajouterCapture}>
-            Ajouter
-          </button>
         </div>
         <div className="mini ocre-aide">
-          Ajoute chaque monstre capturé pour cocher ta progression du Dofus Ocre.
+          Les monstres sont séparés par étape. Coche chaque capture obtenue pour suivre ta progression.
         </div>
       </div>
 
-      <div className="section">
-        <div className="section-entete">
-          <h2>Captures</h2>
-          <div className="compteur">
-            {obtenues} capturée{obtenues > 1 ? 's' : ''} / {total}
+      {monstresParEtape.map((etape) => (
+        <section key={etape.numero} className="section">
+          <div className="section-entete">
+            <h2>Étape {etape.numero}</h2>
+            <div className="compteur">
+              {etape.obtenues} / {etape.total}
+            </div>
           </div>
-        </div>
 
-        {capturesFiltrees.length === 0 ? (
-          <div className="ocre-vide mini">Aucune capture pour le moment. Ajoute ta première entrée !</div>
-        ) : (
-          <ul className="ocre-liste">
-            {capturesFiltrees.map((capture) => (
-              <li key={capture.id} className={`ocre-item ${capture.obtenue ? 'ocre-item-ok' : ''}`}>
-                <label className="ocre-item-check">
-                  <input
-                    type="checkbox"
-                    checked={capture.obtenue}
-                    onChange={() => basculerCapture(capture.id)}
-                  />
-                  <span>{capture.nom}</span>
-                </label>
-                <button className="btn btn-ghost" type="button" onClick={() => supprimerCapture(capture.id)}>
-                  Supprimer
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+          {etape.monstres.length === 0 ? (
+            <div className="ocre-vide mini">Aucun monstre pour ce filtre.</div>
+          ) : (
+            <ul className="ocre-liste">
+              {etape.monstres.map((monstre) => (
+                <li key={monstre.id} className={`ocre-item ${etat.progression[monstre.id] ? 'ocre-item-ok' : ''}`}>
+                  <label className="ocre-item-check">
+                    <input
+                      type="checkbox"
+                      checked={etat.progression[monstre.id]}
+                      onChange={() => basculerCapture(monstre.id)}
+                    />
+                    <ImageMonstre nom={monstre.nom} slug={monstre.slug} />
+                    <span>{monstre.nom}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
     </div>
   );
 }

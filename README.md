@@ -8,7 +8,7 @@ Application web pour suivre la progression d'élevage des dragodindes par géné
 - Gestion locale de la progression (stockage dans le navigateur).
 - Import/export de la progression au format JSON.
 - Consultation des recettes d'accouplement.
-- Checklist dédiée aux captures d'âmes du Dofus Ocre (ajout, coche, import/export).
+- Checklist dédiée aux captures d'âmes du Dofus Ocre (séparée par étapes, coche, import/export).
 
 ## Prérequis
 
@@ -37,4 +37,10 @@ npm run build
 
 ```bash
 npm run preview
+```
+
+## Télécharger les images des monstres du Dofus Ocre
+
+```bash
+npm run images:ocre
 ```
