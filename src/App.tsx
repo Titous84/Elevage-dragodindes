@@ -4,6 +4,7 @@ import type { EtatApplication, StatutDinde, Dragodinde } from './types/elevage';
 import { chargerEtat, creerEtatInitial, sauvegarderEtat } from './utils/stockageLocal';
 import { BarreOutils } from './components/BarreOutils';
 import { GenerationSection } from './components/GenerationSection';
+import { PageOcre } from './components/PageOcre';
 
 import { RECETTES } from './data/recettes';
 import { ModalRecette } from './components/ModalRecette';
@@ -13,6 +14,7 @@ function genererListeGenerations(): number[] {
 }
 
 export default function App(): React.JSX.Element {
+  const [vueActive, setVueActive] = useState<'ELEVAGE' | 'OCRE'>('ELEVAGE');
   const ids = useMemo(() => DRAGODINDES.map((d) => d.id), []);
   const [etat, setEtat] = useState<EtatApplication>(() => {
     const existant = chargerEtat();
@@ -109,47 +111,70 @@ export default function App(): React.JSX.Element {
 
   return (
     <div className="page">
-      <BarreOutils
-        total={total}
-        obtenues={obtenues}
-        filtre={filtre}
-        onChangerFiltre={setFiltre}
-        onExporter={exporter}
-        onImporter={importer}
-        onReinitialiser={reinitialiser}
-      />
-
-      <div className="contenu">
-        {generations.map((g: number) => {
-          const dindesGen = DRAGODINDES.filter((d) => d.generation === g);
-
-          const dindesFiltrees =
-            filtre === 'TOUT'
-              ? dindesGen
-              : dindesGen.filter((d) => etat.progression[d.id] === (filtre as StatutDinde));
-
-          return (
-            <GenerationSection
-              key={g}
-              generation={g}
-              dindes={dindesFiltrees}
-              progression={etat.progression}
-              onChangerStatut={changerStatut}
-              onOuvrirRecette={ouvrirRecette}
-            />
-          );
-        })}
+      <div className="navigation">
+        <button
+          className={`btn ${vueActive === 'ELEVAGE' ? 'btn-actif' : ''}`}
+          type="button"
+          onClick={() => setVueActive('ELEVAGE')}
+        >
+          Élevage
+        </button>
+        <button
+          className={`btn ${vueActive === 'OCRE' ? 'btn-actif' : ''}`}
+          type="button"
+          onClick={() => setVueActive('OCRE')}
+        >
+          Dofus Ocre
+        </button>
       </div>
 
-      <ModalRecette
-        estOuvert={modalOuvert}
-        onFermer={fermerRecette}
-        dindeCible={dindeSelectionneeId ? trouverDindeParId(dindeSelectionneeId) ?? null : null}
-        recette={dindeSelectionneeId ? recettePour(dindeSelectionneeId) : null}
-        progression={etat.progression}
-        trouverDindeParId={trouverDindeParId}
-        onOuvrirRecette={ouvrirRecette}
-      />
+      {vueActive === 'ELEVAGE' ? (
+        <>
+          <BarreOutils
+            total={total}
+            obtenues={obtenues}
+            filtre={filtre}
+            onChangerFiltre={setFiltre}
+            onExporter={exporter}
+            onImporter={importer}
+            onReinitialiser={reinitialiser}
+          />
+
+          <div className="contenu">
+            {generations.map((g: number) => {
+              const dindesGen = DRAGODINDES.filter((d) => d.generation === g);
+
+              const dindesFiltrees =
+                filtre === 'TOUT'
+                  ? dindesGen
+                  : dindesGen.filter((d) => etat.progression[d.id] === (filtre as StatutDinde));
+
+              return (
+                <GenerationSection
+                  key={g}
+                  generation={g}
+                  dindes={dindesFiltrees}
+                  progression={etat.progression}
+                  onChangerStatut={changerStatut}
+                  onOuvrirRecette={ouvrirRecette}
+                />
+              );
+            })}
+          </div>
+
+          <ModalRecette
+            estOuvert={modalOuvert}
+            onFermer={fermerRecette}
+            dindeCible={dindeSelectionneeId ? trouverDindeParId(dindeSelectionneeId) ?? null : null}
+            recette={dindeSelectionneeId ? recettePour(dindeSelectionneeId) : null}
+            progression={etat.progression}
+            trouverDindeParId={trouverDindeParId}
+            onOuvrirRecette={ouvrirRecette}
+          />
+        </>
+      ) : (
+        <PageOcre />
+      )}
     </div>
   );
 }

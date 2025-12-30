@@ -1,6 +1,6 @@
 # Élevage de dragodindes
 
-Application web pour suivre la progression d'élevage des dragodindes par génération, gérer leur statut et consulter les recettes d'accouplement.
+Application web pour suivre la progression d'élevage des dragodindes par génération, gérer leur statut et consulter les recettes d'accouplement, avec une page dédiée aux captures d'âmes du Dofus Ocre.
 
 ## Fonctionnalités
 
@@ -8,6 +8,7 @@ Application web pour suivre la progression d'élevage des dragodindes par géné
 - Gestion locale de la progression (stockage dans le navigateur).
 - Import/export de la progression au format JSON.
 - Consultation des recettes d'accouplement.
+- Checklist dédiée aux captures d'âmes du Dofus Ocre (ajout, coche, import/export).
 
 ## Prérequis
 
